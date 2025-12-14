@@ -1,0 +1,12 @@
+
+
+spring:
+  application:
+    name: Nobi
+  config:
+      import: "optional:file:.env[.properties]"
+
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+
