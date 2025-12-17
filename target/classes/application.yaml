@@ -5,6 +5,10 @@ spring:
     name: Nobi
   config:
       import: "optional:file:.env[.properties]"
+  datasource:
+    url: jdbc:sqlite:nobi.db
+    driver-class-name: org.sqlite.JDBC
+
 
 telegram:
   bot:

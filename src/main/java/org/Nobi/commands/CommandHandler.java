@@ -1,4 +1,4 @@
-package org.Nobi.services;
+package org.Nobi.commands;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 

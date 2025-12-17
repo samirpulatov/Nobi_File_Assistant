@@ -1,0 +1,26 @@
+package org.Nobi.commands;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.telegram.telegrambots.meta.api.objects.Update;
+
+public class StartCommand extends CommandHandler {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(StartCommand.class);
+
+    @Override
+    public boolean canHandle(String command) {
+        return command.equals("/start");
+    }
+
+    public String handle(Update update) {
+        LOGGER.info("Received Update {}", update);
+        LOGGER.info("START command received");
+        String firstName = update.getMessage().getFrom().getFirstName();
+        return "Здравствуйте, " + firstName + " 👋.\n\n" +
+                "Меня зовут Nobi 👽 — Ваш персональный ассистент в Telegram. " +
+                "Я помогу Вам с повседневными задачами: от составления удобного расписания " +
+                "до анализа погоды и рекомендаций по выбору одежды.\n\n" +
+                "Чтобы узнать, на что я способен, введите команду /list.";
+    }
+}
