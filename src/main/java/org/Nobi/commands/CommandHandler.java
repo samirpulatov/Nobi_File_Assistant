@@ -1,6 +1,9 @@
 package org.Nobi.commands;
 
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.List;
 
 public abstract class CommandHandler {
 
@@ -10,8 +13,8 @@ public abstract class CommandHandler {
     }
 
 
-    public String handle(Update update) {
-        return update.getMessage().getText();
+    public List<BotApiMethod<?>> handle(Update update){
+        return null;
     }
 
 }

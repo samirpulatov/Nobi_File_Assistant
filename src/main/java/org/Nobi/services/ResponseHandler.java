@@ -1,6 +1,7 @@
 package org.Nobi.services;
 
 import org.Nobi.commands.CommandHandler;
+import org.Nobi.commands.DailyTasksCommand;
 import org.Nobi.commands.ListCommand;
 import org.Nobi.commands.StartCommand;
 import org.Nobi.dto.User;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class ResponseHandler {
     }
 
 
-    public void handleResponse(Update update) {
+    public void handleResponse(Update update)  {
         LOGGER.info("Received Update {}", update);
         LOGGER.info("Handle Response {}", update);
         String message = update.getMessage().getText();
@@ -46,12 +48,17 @@ public class ResponseHandler {
             userService.saveUser(new User(chatId,userName,firstName,lastName,userRole));
         }
         commandHandlers.add(new StartCommand());
+        commandHandlers.add(new DailyTasksCommand());
         commandHandlers.add(new ListCommand());
+
+
         commandHandlers.stream()
-                .filter(h -> h.canHandle(message))
-                .findFirst()
-                .map(h -> h.handle(update))
-                .ifPresent(response -> messageSender.sendMessage(chatId,response));
+                    .filter(h -> h.canHandle(message))
+                    .findFirst()
+                    .map(h -> h.handle(update))
+                    .ifPresent(responses ->
+                            responses.forEach(messageSender::execute)
+                    );
 
     }
 }
