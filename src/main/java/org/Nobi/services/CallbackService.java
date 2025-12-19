@@ -15,9 +15,11 @@ public class CallbackService {
 
     private final List<CallBackHandler> callBackHandlers = new ArrayList<>();
     private final MessageSender messageSender;
-    public CallbackService(MessageSender messageSender)
+    private final UserStateService userStateService;
+    public CallbackService(MessageSender messageSender, UserStateService userStateService)
     {
         this.messageSender = messageSender;
+        this.userStateService = userStateService;
     }
 
     public void setTelegramClient(TelegramClient telegramClient)
@@ -28,7 +30,7 @@ public class CallbackService {
 
         CallbackQuery callbackQuery = update.getCallbackQuery();
         String message = callbackQuery.getData().toString();
-        callBackHandlers.add(new DailyPermissionCallbackHandler());
+        callBackHandlers.add(new DailyPermissionCallbackHandler(userStateService));
         callBackHandlers.stream()
                 .filter(h -> h.canHandle(message))
                 .findFirst()
