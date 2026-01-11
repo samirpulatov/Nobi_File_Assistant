@@ -1,6 +1,7 @@
 package org.Nobi.services;
 
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +36,7 @@ public class FileService {
         this.pdfService = pdfService;
     }
 
-    public List<SendDocument> convertFileTo(Long chat_id, File file, String file_name, String action) {
+    public SendDocument convertFileTo(Long chat_id, File file, String file_name, String action) {
 
         //download file and save it locally
         var localFile = saveFileLocally(file,file_name);
@@ -44,7 +45,7 @@ public class FileService {
         {
             //then convert it due to action that user has chosen
             var convertedFile = handleAction(localFile,action);
-            return Collections.singletonList(convert_File_To_SendDocument(chat_id, convertedFile));
+            return convert_File_To_SendDocument(chat_id, convertedFile);
         }
 
         return null;
@@ -72,7 +73,8 @@ public class FileService {
             case "JPG_TO_PNG" -> jpgService.convertJPG_TO_PNG(localFile);
             case "JPG_TO_PDF" -> jpgService.convertJPG_TO_PDF(localFile);
             case "JPG_TO_WEBP" -> jpgService.convertJPG_TO_WEBP(localFile);
-            case "PDF_TO_WORD" -> pdfService.convertPdf_To_WORD(localFile);
+            case "PDF_TO_WORD" -> pdfService.convertPdf_TO_WORD(localFile);
+            case "PDF_TO_TEXT" -> pdfService.convertPdf_TO_TEXT(localFile);
             default -> {
                 LOGGER.error("Unknown operation");
                 yield null;

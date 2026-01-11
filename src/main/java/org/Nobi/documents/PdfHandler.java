@@ -43,8 +43,8 @@ public class PdfHandler implements FileHandler {
                 .build();
 
         InlineKeyboardButton webpBtn = InlineKeyboardButton.builder()
-                .text("Конвертация изображений в формат JPG")
-                .callbackData("PDF_TO_JPG")
+                .text("Конвертация в TEXT")
+                .callbackData("PDF_TO_TEXT")
                 .build();
 
         InlineKeyboardButton pngBtn = InlineKeyboardButton.builder()

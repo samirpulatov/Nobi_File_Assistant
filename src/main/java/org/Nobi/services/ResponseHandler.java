@@ -91,12 +91,10 @@ public class ResponseHandler {
                 File tgFile = fileSender.downloadFile(new GetFile(currentSession.getFileId())); // use telegramClient.execute method to get the File
                 String file_name = currentSession.getFileName();
 
-                var outputFiles = fileService.convertFileTo(chat_id,tgFile,file_name,action); // convert file to type that user has chosen
-                if(outputFiles!=null) {
+                var outputFile = fileService.convertFileTo(chat_id,tgFile,file_name,action); // convert file or files to type that user has chosen
+                if(outputFile!=null) {
                     try{
-                        for (SendDocument outputFile : outputFiles) {
-                            fileSender.sendDocument(outputFile);
-                        }
+                       fileSender.sendDocument(outputFile);
                     } catch (TelegramApiException e) {
                         LOGGER.error("Could not send document");
                         var message = messageSender.buildSendMessage(chat_id,"Извините возникла ошибка во время отправления файла\uD83D\uDE14. Telegram блокирует отправку файлов большого размера, но Вы можете выбрать другой формат и попробовать еще раз! ");
