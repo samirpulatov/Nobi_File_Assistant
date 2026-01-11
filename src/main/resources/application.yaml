@@ -1,10 +1,8 @@
-
-
 spring:
   application:
     name: Nobi
   config:
-      import: "optional:file:.env[.properties]"
+    import: optional:file:.env[.properties]
   datasource:
     url: jdbc:sqlite:nobi.db
     driver-class-name: org.sqlite.JDBC
@@ -19,3 +17,6 @@ openai:
   api-key: ${OPENAI_API_KEY}
   model: gpt-4o-mini
 
+storage:
+  download-dir: downloads
+  output-dir: output

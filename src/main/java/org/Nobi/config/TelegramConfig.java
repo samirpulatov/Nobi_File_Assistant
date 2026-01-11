@@ -1,4 +1,4 @@
-package org.Nobi.services;
+package org.Nobi.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,6 @@
 package org.Nobi;
 
-import org.Nobi.services.CallbackService;
+
 import org.Nobi.services.ResponseHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,16 +13,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class NobiBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private final ResponseHandler responseHandler;
-    private final CallbackService callbackService;
 
-    public NobiBot(ResponseHandler responseHandler, CallbackService callbackService) {
-        this.responseHandler = responseHandler;
-        this.callbackService = callbackService;
-    }
 
 
     @Value("${telegram.bot.token}")
     private String botToken;
+
+    public NobiBot(ResponseHandler responseHandler) {
+        this.responseHandler = responseHandler;
+
+    }
 
     @Override
     public String getBotToken() {
@@ -36,10 +36,8 @@ public class NobiBot implements SpringLongPollingBot, LongPollingSingleThreadUpd
 
     @Override
     public void consume(Update update) {
-        if (update.hasCallbackQuery()) {
-            callbackService.handleCallback(update);
-        } else {
             responseHandler.handleResponse(update);
-        }
     }
+
+
 }

@@ -31,3 +31,8 @@ nobi.db
 
 # target
 target/
+
+#downloads and output files
+downloads/
+output/
+.idea/

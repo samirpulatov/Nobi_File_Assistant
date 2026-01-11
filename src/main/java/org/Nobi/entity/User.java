@@ -1,26 +1,13 @@
 package org.Nobi.entity;
 
-import lombok.*;
-import org.Nobi.enums.UserRole;
-import org.Nobi.enums.UserState;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class User {
-    private Integer id;
-    private  Long chat_id;
-    private  String userName;
-    private  String firstName;
-    private  String lastName;
-    private  UserRole userRole;
-    private UserState userState;
-
-    public User(Long chatId,String userName,String firstName, String lastName, UserRole userRole) {
-        this.chat_id = chatId;
-        this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userRole = userRole;
-
-    }
+    private Long chat_id;
+    private String user_name;
+    private String first_name;
+    private String last_name;
 }

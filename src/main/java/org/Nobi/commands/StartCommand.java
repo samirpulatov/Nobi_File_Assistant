@@ -1,7 +1,5 @@
 package org.Nobi.commands;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,35 +8,31 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-public class StartCommand extends CommandHandler {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(StartCommand.class);
-
+public class StartCommand implements CommandHandler {
     @Override
     public boolean canHandle(String command) {
         return command.equals("/start");
     }
 
+    @Override
     public List<BotApiMethod<?>> handle(Update update) {
-        LOGGER.info("Received Update {}", update);
-        LOGGER.info("START command received");
-        String firstName = update.getMessage().getFrom().getFirstName();
-        Long chatId = update.getMessage().getChatId();
+        String first_name = update.getMessage().getFrom().getFirstName();
+        Long chat_id = update.getMessage().getChatId();
         return List.of(
-                introMessage(chatId,firstName)
+                introMessage(chat_id,first_name)
         );
     }
 
-    private SendMessage introMessage(Long chatId,String firstName) {
+    private SendMessage introMessage(Long chat_id, String first_name) {
 
         return SendMessage.builder()
-                .chatId(chatId)
+                .chatId(chat_id)
                 .text(
-                "Здравствуйте, " + firstName + " 👋.\n\n" +
-                "Меня зовут Nobi 👽 — Ваш персональный ассистент в Telegram. " +
-                "Я помогу Вам с повседневными задачами: от составления удобного расписания " +
-                "до анализа погоды и рекомендаций по выбору одежды.\n\n" +
-                "Чтобы узнать, на что я способен, введите команду /list."
+                        "Здравствуйте, " + first_name + " 👋.\n\n" +
+                                "Меня зовут Nobi 👽 — Ваш персональный помощник в Telegram. " +
+                                "Я помогу Вам работать с файлами и документами прямо здесь: " +
+                                "просматривать, редактировать и управлять ими удобно и быстро. "+
+                                "Загрузите файл сюда для начала работы."
                 )
                 .build();
     }
