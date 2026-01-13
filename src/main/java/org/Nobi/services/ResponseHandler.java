@@ -1,6 +1,8 @@
 package org.Nobi.services;
 
 import org.Nobi.dto.UserFileSession;
+import org.Nobi.exceptions.FileConversionException;
+import org.Nobi.exceptions.UserSessionNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ public class ResponseHandler {
     private final UserService userService;
 
     //service to convert files
-    private final FileService fileService;
+    private final ImageConverterService imageConverterService;
 
     //router is used to go through all commands or file operations and choose the correct option
     private final CommandRouter commandRouter;
@@ -38,9 +40,9 @@ public class ResponseHandler {
     //fileSender is used to send objects of type SendMediaBotMethod
     private final FileSender fileSender;
 
-    public ResponseHandler(UserService userService, FileService fileService, CommandRouter commandRouter, FileRouter fileRouter, MessageSender messageSender, FileSender fileSender) {
+    public ResponseHandler(UserService userService, ImageConverterService imageConverterService, CommandRouter commandRouter, FileRouter fileRouter, MessageSender messageSender, FileSender fileSender) {
         this.userService = userService;
-        this.fileService = fileService;
+        this.imageConverterService = imageConverterService;
         this.commandRouter = commandRouter;
         this.fileRouter = fileRouter;
         this.messageSender = messageSender;
@@ -62,7 +64,7 @@ public class ResponseHandler {
         }
         //if update has document then
         else if(update.getMessage()!=null && update.getMessage().hasDocument()) {
-            LOGGER.info("Handling update with some document");
+            LOGGER.info("Handling update with some document {}", update.getMessage().getDocument().getFileName());
 
             Long chat_id = update.getMessage().getChatId();
             Document document = update.getMessage().getDocument();
@@ -84,25 +86,29 @@ public class ResponseHandler {
 
             UserFileSession currentSession = userFiles.get(chat_id); // get the file that was uploaded from this user
 
+            if(currentSession==null) {
+                throw new UserSessionNotFoundException(chat_id);
+            }
 
-            if(currentSession!=null) {
-                currentSession.setSelectedAction(action); // set selectedAction and then perform that action. Z.b JPG_TO_PDF
+            currentSession.setSelectedAction(action); // set selectedAction and then perform that action. Z.b JPG_TO_PDF
 
-                File tgFile = fileSender.downloadFile(new GetFile(currentSession.getFileId())); // use telegramClient.execute method to get the File
-                String file_name = currentSession.getFileName();
+            File tgFile = fileSender.downloadFile(new GetFile(currentSession.getFileId())); // use telegramClient.execute method to get the File
+            String file_name = currentSession.getFileName();
 
-                var outputFile = fileService.convertFileTo(chat_id,tgFile,file_name,action); // convert file or files to type that user has chosen
-                if(outputFile!=null) {
-                    try{
-                       fileSender.sendDocument(outputFile);
-                    } catch (TelegramApiException e) {
-                        LOGGER.error("Could not send document");
-                        var message = messageSender.buildSendMessage(chat_id,"Извините возникла ошибка во время отправления файла\uD83D\uDE14. Telegram блокирует отправку файлов большого размера, но Вы можете выбрать другой формат и попробовать еще раз! ");
-                        messageSender.execute(message);
-                    }
-                }
+            SendDocument outputFile = imageConverterService.convertFileTo(chat_id,tgFile,file_name,action); // convert file or files to type that user has chosen
+            if(outputFile==null) {
+                throw new FileConversionException(chat_id,file_name,action);
+            }
+            try{
+               fileSender.sendDocument(outputFile);
+            } catch (TelegramApiException e) {
+                LOGGER.error("Could not send document ", e);
+                var message = messageSender.buildSendMessage(chat_id,"Извините возникла ошибка во время отправления файла\uD83D\uDE14. Telegram блокирует отправку файлов большого размера, но Вы можете выбрать другой формат и попробовать еще раз! ");
+                messageSender.execute(message);
             }
         }
     }
 }
+
+
 

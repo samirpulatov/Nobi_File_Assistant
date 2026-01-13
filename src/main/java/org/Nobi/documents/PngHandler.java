@@ -1,7 +1,8 @@
 package org.Nobi.documents;
 
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,17 +15,18 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.List;
 
 @Component
-public class PdfHandler implements FileHandler {
+public class PngHandler implements FileHandler {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(PngHandler.class);
+
 
     @Override
     public boolean canHandle(String fileName) {
-
-        return fileName.contains("pdf") || fileName.contains("PDF");
+        return fileName.contains("png") || fileName.contains("PNG");
     }
 
     @Override
     public List<BotApiMethod<?>> handle(Update update) {
-
         Document document = update.getMessage().getDocument();
         String file_name = document.getFileName();
         Long chat_id = update.getMessage().getChatId();
@@ -32,24 +34,23 @@ public class PdfHandler implements FileHandler {
         return List.of(introMessage(chat_id,file_name));
     }
 
-
     private SendMessage introMessage(Long chat_id, String file_name) {
         String text = "Отлично. Ваш файл был успешно загружен, теперь выберите нужную Вам функцию и нажмите на соответствующую кнопку!";
 
 
         InlineKeyboardButton pdfBtn = InlineKeyboardButton.builder()
-                .text("Конвертация в WORD\u200B\u200B\uD83D\uDCC4\u200B")
-                .callbackData("PDF_TO_WORD")
+                .text("Конвертация в PDF📄")
+                .callbackData("PNG_TO_PDF")
                 .build();
 
         InlineKeyboardButton webpBtn = InlineKeyboardButton.builder()
-                .text("Конвертация в TEXT")
-                .callbackData("PDF_TO_TEXT")
+                .text("Конвертация в WEBP🌐")
+                .callbackData("PNG_TO_WEBP")
                 .build();
 
         InlineKeyboardButton pngBtn = InlineKeyboardButton.builder()
-                .text("Конвертация изображений в формат PNG🖼")
-                .callbackData("PDF_TO_PNG")
+                .text("Конвертация в JPG🖼")
+                .callbackData("PNG_TO_JPG")
                 .build();
 
 

@@ -26,10 +26,10 @@ public class JpgService {
         try {
             BufferedImage image = ImageIO.read(file);
 
-            String file_name_without_extension = get_rid_of_extension(file);
+            String file_name_with_png_extension = file.getName().replaceAll("(?i)\\.jpg$",".png");
 
             //Create a new output file
-            java.io.File output = new java.io.File("output/"+file_name_without_extension+".png");
+            java.io.File output = new java.io.File("output/"+file_name_with_png_extension);
 
             //Write the image to the output file in PNG format
             ImageIO.write(image,"png",output);
@@ -46,9 +46,9 @@ public class JpgService {
     java.io.File convertJPG_TO_PDF(java.io.File file) {
         //using iText 7 library to work with pdf files
         try {
-            String file_name_without_extension = get_rid_of_extension(file);
+            String file_name_with_pdf_extension = file.getName().replaceAll("(?i)\\.jpg$",".pdf");
 
-            java.io.File output = new java.io.File("output/"+file_name_without_extension+".pdf");
+            java.io.File output = new java.io.File("output/"+file_name_with_pdf_extension);
 
 
             //Create a PDFWriter
@@ -83,9 +83,9 @@ public class JpgService {
         try {
             BufferedImage image = ImageIO.read(file);
 
-            String file_name_without_extension = get_rid_of_extension(file);
+            String file_name_with_webp_extension = file.getName().replaceAll("(?i)\\.jpg$",".webp");
 
-            java.io.File output = new java.io.File("output/"+file_name_without_extension+".webp");
+            java.io.File output = new java.io.File("output/"+file_name_with_webp_extension);
 
             ImageIO.write(image,"webp",output);
 
@@ -97,15 +97,6 @@ public class JpgService {
         }
     }
 
-    private String get_rid_of_extension(java.io.File file) {
-
-        // remove extension from  file
-        String file_name = file.getName();
-        int indexOfExtension = file.getName().lastIndexOf(".");
-
-        // in case of an error return just file name
-        return (indexOfExtension == -1) ? file_name : file.getName().substring(0,indexOfExtension);
-    }
 
 
 }

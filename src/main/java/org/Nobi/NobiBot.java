@@ -1,6 +1,7 @@
 package org.Nobi;
 
 
+import org.Nobi.exceptions.GlobalExceptionHandler;
 import org.Nobi.services.ResponseHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,15 +14,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class NobiBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private final ResponseHandler responseHandler;
-
-
-
+    private final GlobalExceptionHandler globalExceptionHandler;
     @Value("${telegram.bot.token}")
     private String botToken;
 
-    public NobiBot(ResponseHandler responseHandler) {
+    public NobiBot(ResponseHandler responseHandler, GlobalExceptionHandler globalExceptionHandler) {
         this.responseHandler = responseHandler;
 
+        this.globalExceptionHandler = globalExceptionHandler;
     }
 
     @Override
@@ -35,8 +35,13 @@ public class NobiBot implements SpringLongPollingBot, LongPollingSingleThreadUpd
     }
 
     @Override
-    public void consume(Update update) {
+    public void consume(Update update){
+        try{
             responseHandler.handleResponse(update);
+        } catch (Exception e) {
+            globalExceptionHandler.handleException(e,update);
+        }
+
     }
 
 
