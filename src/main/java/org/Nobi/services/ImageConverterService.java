@@ -40,12 +40,9 @@ public class ImageConverterService {
     }
 
     public SendDocument convertFileTo(Long chat_id, File file, String file_name, String action) {
-
         try{
             //download file and save it locally
             var localFile = saveFileLocally(file,file_name);
-
-
             //then convert it due to action that user has chosen
             var convertedFile = handleAction(localFile,action);
 

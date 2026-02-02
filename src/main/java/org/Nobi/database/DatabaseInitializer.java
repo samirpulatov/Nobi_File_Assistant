@@ -4,10 +4,6 @@ import org.Nobi.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-
-
-
-
 @Component
 public class DatabaseInitializer implements CommandLineRunner {
 

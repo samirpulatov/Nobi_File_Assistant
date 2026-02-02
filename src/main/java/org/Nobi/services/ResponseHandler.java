@@ -1,7 +1,7 @@
 package org.Nobi.services;
 
 import org.Nobi.dto.UserFileSession;
-import org.Nobi.exceptions.FileConversionException;
+import org.Nobi.exceptions.FileSendException;
 import org.Nobi.exceptions.UserSessionNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,6 @@ public class ResponseHandler {
 
     public void handleResponse(Update update) {
         LOGGER.info("Received Update {}", update);
-        LOGGER.info("Handle Response {}", update);
 
         //check for user if there is a new update in form of a message,document and etc
         if(update.getMessage()!=null) userService.initIfNeeded(update); // check if user exists and if not then save him
@@ -96,15 +95,11 @@ public class ResponseHandler {
             String file_name = currentSession.getFileName();
 
             SendDocument outputFile = imageConverterService.convertFileTo(chat_id,tgFile,file_name,action); // convert file or files to type that user has chosen
-            if(outputFile==null) {
-                throw new FileConversionException(chat_id,file_name,action);
-            }
-            try{
-               fileSender.sendDocument(outputFile);
+
+            try {
+                fileSender.sendDocument(outputFile);
             } catch (TelegramApiException e) {
-                LOGGER.error("Could not send document ", e);
-                var message = messageSender.buildSendMessage(chat_id,"Извините возникла ошибка во время отправления файла\uD83D\uDE14. Telegram блокирует отправку файлов большого размера, но Вы можете выбрать другой формат и попробовать еще раз! ");
-                messageSender.execute(message);
+                throw new FileSendException(chat_id, e);
             }
         }
     }

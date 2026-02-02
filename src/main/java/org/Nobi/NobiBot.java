@@ -20,7 +20,6 @@ public class NobiBot implements SpringLongPollingBot, LongPollingSingleThreadUpd
 
     public NobiBot(ResponseHandler responseHandler, GlobalExceptionHandler globalExceptionHandler) {
         this.responseHandler = responseHandler;
-
         this.globalExceptionHandler = globalExceptionHandler;
     }
 
@@ -43,6 +42,4 @@ public class NobiBot implements SpringLongPollingBot, LongPollingSingleThreadUpd
         }
 
     }
-
-
 }

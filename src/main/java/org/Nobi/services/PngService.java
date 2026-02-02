@@ -7,6 +7,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import org.Nobi.documents.PngHandler;
+import org.Nobi.exceptions.ImageConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class PngService {
             return output_file;
         } catch(Exception e){
             LOGGER.error("Error while converting JPG_TO_PDF", e);
-            return null;
+            throw new ImageConversionException("Failed to convert JPG to PDF", e);
         }
     }
 
@@ -57,13 +58,18 @@ public class PngService {
 
         try{
             BufferedImage image = ImageIO.read(file);
+
+            if (image == null) {
+                throw new ImageConversionException("Unsupported PNG file: " + file.getName());
+            }
+
             String file_name_with_new_extension = file.getName().replaceAll("(?i)\\.png$",".jpg");
             File output_file = new File("output/"+file_name_with_new_extension);
             ImageIO.write(image,"jpg",output_file);
             return output_file;
         } catch(Exception e){
             LOGGER.error("Error while converting PNG to JPG",e);
-            return null;
+            throw new ImageConversionException("Failed to convert PNG to JPG", e);
         }
 
     }
@@ -73,6 +79,10 @@ public class PngService {
 
         try {
             BufferedImage image = ImageIO.read(file);
+
+            if (image == null) {
+                throw new ImageConversionException("Unsupported PNG file: " + file.getName());
+            }
 
             String file_name_with_webp_extension = file.getName().replaceAll("(?i)\\.png$",".webp");
 
@@ -84,7 +94,7 @@ public class PngService {
         }
         catch(IOException e) {
             LOGGER.error("Error converting PNG to webp ", e);
-            return null;
+            throw new ImageConversionException("Failed to convert PNG to webp", e);
         }
     }
 

@@ -1,6 +1,7 @@
 package org.Nobi.services;
 import openize.heic.decoder.HeicImage;
 
+import org.Nobi.exceptions.ImageConversionException;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +44,14 @@ public class HeicService {
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 LOGGER.error("ImageMagick compression failed, exit code: {}", exitCode);
-                return null;
+                throw new ImageConversionException("Failed to convert HEIC to PDF");
             }
 
             return output_file;
 
         } catch (Exception magickEx) {
             LOGGER.error("Failed to convert HEIC to PNG with ImageMagick", magickEx);
-            return null;
+            throw new ImageConversionException("Failed to convert HEIC to PDF", magickEx);
         }
 
     }
@@ -72,14 +73,14 @@ public class HeicService {
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 LOGGER.error("ImageMagick conversion failed, exit code: {}", exitCode);
-                return null;
+                throw new ImageConversionException("Failed to convert HEIC");
             }
 
             return output_file;
 
         } catch (Exception magickEx) {
             LOGGER.error("Failed to convert HEIC to PNG with ImageMagick", magickEx);
-            return null;
+            throw new ImageConversionException("Failed to convert HEIC to PNG", magickEx);
         }
     }
 

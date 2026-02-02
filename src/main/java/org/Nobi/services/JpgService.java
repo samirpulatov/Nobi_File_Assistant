@@ -6,6 +6,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+import org.Nobi.exceptions.ImageConversionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,10 @@ public class JpgService {
         try {
             BufferedImage image = ImageIO.read(file);
 
+            if (image == null) {
+                throw new ImageConversionException("Unsupported JPG file: " + file.getName());
+            }
+
             String file_name_with_png_extension = file.getName().replaceAll("(?i)\\.jpg$",".png");
 
             //Create a new output file
@@ -36,11 +41,9 @@ public class JpgService {
 
             return output;
         } catch(IOException e) {
-            LOGGER.error("Error converting JPG_TO_PNG ", e);
+            LOGGER.error("Error converting JPG_TO_PNG file={}", file.getName(), e);
+            throw new ImageConversionException("Failed to convert JPG to PNG", e);
         }
-
-        //return null in case of an error while converting
-        return null;
     }
 
     java.io.File convertJPG_TO_PDF(java.io.File file) {
@@ -71,8 +74,8 @@ public class JpgService {
             //return pdf file
             return output;
         } catch (Exception e) {
-            LOGGER.error("Error converting JPG_TO_PDF",e);
-            return null;
+            LOGGER.error("Error converting JPG_TO_PDF file={}", file.getName(), e);
+            throw new ImageConversionException("Failed to convert JPG to PDF", e);
         }
     }
 
@@ -83,6 +86,10 @@ public class JpgService {
         try {
             BufferedImage image = ImageIO.read(file);
 
+            if (image == null) {
+                throw new ImageConversionException("Unsupported JPG file: " + file.getName());
+            }
+
             String file_name_with_webp_extension = file.getName().replaceAll("(?i)\\.jpg$",".webp");
 
             java.io.File output = new java.io.File("output/"+file_name_with_webp_extension);
@@ -92,11 +99,8 @@ public class JpgService {
             return output;
         }
         catch(IOException e) {
-            LOGGER.error("Error converting JPG_TO_WEBP ", e);
-            return null;
+            LOGGER.error("Error converting JPG_TO_WEBP file={}", file.getName(), e);
+            throw new ImageConversionException("Failed to convert JPG to WEBP", e);
         }
     }
-
-
-
 }
